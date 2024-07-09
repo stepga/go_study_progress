@@ -1,0 +1,5 @@
+moretypes/10
+
+-  The default is zero for the low bound and the length of the slice for the high bound.
++  The default is zero for the low bound and the length of the underlying array for the high bound.
+
