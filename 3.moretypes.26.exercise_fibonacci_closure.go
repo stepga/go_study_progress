@@ -2,8 +2,20 @@ package main
 
 import "fmt"
 
-// TODO: fibonacci is a function that returns a function that returns an int.
+// DONE: fibonacci is a function that returns a function that returns an int.
 func fibonacci() func() int {
+	var previous, current int = 0, 0
+
+	return func() int {
+		if previous == 0 {
+			previous = 1
+		} else {
+			current_old := current
+			current = current + previous
+			previous = current_old
+		}
+		return current
+	}
 }
 
 func main() {
