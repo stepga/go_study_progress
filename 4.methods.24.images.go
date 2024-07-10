@@ -16,5 +16,6 @@ import (
 func main() {
 	m := image.NewRGBA(image.Rect(0, 0, 100, 100))
 	fmt.Println(m.Bounds())
-	fmt.Println(m.At(0, 0).RGBA())
+	r, g, b, a := m.At(0, 0).RGBA()
+	fmt.Printf("%v, %v, %v, %v\n", r, g, b, a)
 }
