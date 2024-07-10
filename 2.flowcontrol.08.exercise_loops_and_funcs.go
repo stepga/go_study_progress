@@ -7,6 +7,10 @@ import (
 func Sqrt(x float64) float64 {
 	var z, last_z float64 = 1, 0
 
+	if x == 0 {
+		return 0
+	}
+
 	for round := 0; ; round++ {
 		z -= (z*z - x) / (2 * z)
 		fmt.Printf("sqrt(%.2f) %d: %.2f\n", x, round, z)
@@ -22,4 +26,5 @@ func main() {
 	fmt.Println(Sqrt(2))
 	fmt.Println(Sqrt(23213212131))
 	fmt.Println(Sqrt(232132121312321313131))
+	fmt.Println(Sqrt(0))
 }
