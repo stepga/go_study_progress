@@ -37,3 +37,9 @@ hello
 $ which hello
 /home/stepga/go/bin/hello
 ```
+
+## `morestrings` package
+
+* create `~/src/go_study_progress/how_to_write_go_code/hello/morestrings`
+* verify successful build via `go build` within this new package
+* re-install hello as above
