@@ -43,3 +43,9 @@ $ which hello
 * create `~/src/go_study_progress/how_to_write_go_code/hello/morestrings`
 * verify successful build via `go build` within this new package
 * re-install hello as above
+
+## importing remote modules
+
+* import the remote module
+* execute `go mod tidy` to add new and remove obsolete modules
+* remove all downloaded modules via `go clean -modcache`
