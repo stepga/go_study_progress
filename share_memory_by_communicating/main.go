@@ -4,6 +4,8 @@
 
 package main
 
+// XXX: behaviour best seen with local webserver and shorter intervals
+
 import (
 	"log"
 	"net/http"
@@ -12,15 +14,16 @@ import (
 
 const (
 	numPollers     = 2                // number of Poller goroutines to launch
-	pollInterval   = 60 * time.Second // how often to poll each URL
-	statusInterval = 10 * time.Second // how often to log status to stdout
+	pollInterval   = 1 * time.Second  // how often to poll each URL
+	statusInterval = 2 * time.Second  // how often to log status to stdout
 	errTimeout     = 10 * time.Second // back-off timeout on error
 )
 
 var urls = []string{
-	"http://www.google.com/",
-	"http://golang.org/",
-	"http://blog.golang.org/",
+	//"http://www.google.com/",
+	//"http://golang.org/",
+	//"http://blog.golang.org/",
+	"http://localhost:8000", // $ python3 -m http.server
 }
 
 // State represents the last-known state of a URL.
@@ -83,16 +86,27 @@ func (r *Resource) Sleep(done chan<- *Resource) {
 	done <- r
 }
 
+// XXX: Convention: Sending a Resource pointer on a channel passes ownership
+// of the underlying data from the sender to the receiver:
+//   - no two goroutines will access this Resource at the same time.
+//   - no sync of data needed
+//
+// XXX: The Poller processes the Resource by calling its Poll method.
 func Poller(in <-chan *Resource, out chan<- *Resource, status chan<- State) {
 	for r := range in {
 		s := r.Poll()
 		status <- State{r.url, s}
+		// XXX It sends a State value to the status channel,
+		//     to inform the StateMonitor of the result of the Poll.
 		out <- r
+		// XXX Finally, it sends the Resource pointer to the out channel. This can
+		//     be interpreted as the Poller saying "I'm done with this Resource"
+		//     and returning ownership of it to the main goroutine
 	}
 }
 
 func main() {
-	// Create our input and output channels.
+	// Create our input and output channels. Resource {url, errCount}
 	pending, complete := make(chan *Resource), make(chan *Resource)
 
 	// Launch the StateMonitor.

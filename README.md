@@ -15,5 +15,5 @@ See [tour](tour/README.md) directory. Repo's version: [281f138](https://go.googl
   - [ ] [Coverage profiling support for integration tests](https://go.dev/doc/build-cover)
 - [ ] Effective Go
   - [ ] [Interfaces and other types](https://go.dev/doc/effective_go#interfaces_and_types)
-- [ ] Codewalk
-  - [ ] See [Codewalk: Share Memory By Communicating](share_memory_by_communicating/README.md) directory.
+- [X] Codewalk
+  - [X] See [Codewalk: Share Memory By Communicating](share_memory_by_communicating/README.md) directory.
