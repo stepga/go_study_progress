@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"sort"
 )
 
 type Page struct {
@@ -44,4 +46,30 @@ func main() {
 	} else {
 		fmt.Printf("%s\n", p2.Body)
 	}
+
+	http.HandleFunc("/", handler)
+	// XXX: ^ register handler for web root "/"
+	log.Fatalf("[ERROR] ListenAndServe: %v\n", http.ListenAndServe(":8080", nil))
+}
+
+func printHeader(w http.ResponseWriter, h http.Header) {
+	keys := make([]string, 0)
+	for k := range h {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	fmt.Fprintln(w, "Header:")
+	for _, k := range keys {
+		fmt.Fprintf(w, " %s: %v\n", k, h[k])
+	}
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	request_path := r.URL.Path[1:]
+	if len(request_path) > 0 {
+		fmt.Fprintln(w, "requested url path:")
+		fmt.Fprintf(w, " '%s'\n", request_path)
+	}
+	printHeader(w, r.Header)
 }
