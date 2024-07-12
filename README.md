@@ -10,7 +10,7 @@ See [tour](tour/) directory. Repo's version: [281f138](https://go.googlesource.c
   - [X] [Go's Declaration Syntax](https://go.dev/blog/declaration-syntax)
   - [X] [Go Slices: usage and internals](https://go.dev/blog/slices-intro)
   - [X] [How to Write Go Code](how_to_write_go_code/)
-  - [ ] [Writing Web Applications](https://go.dev/doc/articles/wiki/)
+  - [X] [Writing Web Applications](gowiki/)
   - [ ] [Error handling and Go](https://go.dev/blog/error-handling-and-go)
   - [ ] [Coverage profiling support for integration tests](https://go.dev/doc/build-cover)
 - [ ] Effective Go
