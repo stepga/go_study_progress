@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"strings"
 )
 
 type Page struct {
@@ -47,8 +48,9 @@ func main() {
 		fmt.Printf("%s\n", p2.Body)
 	}
 
-	http.HandleFunc("/", handler)
-	// XXX: ^ register handler for web root "/"
+	http.HandleFunc("/", rootHandler)
+	http.HandleFunc("/header", headerHandler)
+	http.HandleFunc("/view/", viewHandler)
 	log.Fatalf("[ERROR] ListenAndServe: %v\n", http.ListenAndServe(":8080", nil))
 }
 
@@ -65,11 +67,47 @@ func printHeader(w http.ResponseWriter, h http.Header) {
 	}
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func listFilesWithSuffix(suffix string) []string {
+	dir_entries, err := os.ReadDir("./")
+	if err != nil {
+		log.Fatalf("[ERROR] ReadDir(\"./\"): %v\n", err)
+	}
+
+	ret := make([]string, 0)
+	for _, dir_entry := range dir_entries {
+		if strings.HasSuffix(dir_entry.Name(), suffix) {
+			ret = append(ret, dir_entry.Name())
+		}
+	}
+	sort.Strings(ret)
+	return ret
+}
+
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	suffix := ".txt"
+	txt_file_names := listFilesWithSuffix(suffix)
+	fmt.Fprintln(w, "<html><body>")
+	if len(txt_file_names) > 0 {
+		fmt.Fprintf(w, "<h1>Pages:</h1>\n")
+	}
+	for _, fname := range txt_file_names {
+		page_title := fname[:len(fname)-len(suffix)]
+		fmt.Fprintf(w, "<a href=\"/view/%s\">%s</a><br>\n", page_title, page_title)
+	}
+	fmt.Fprintln(w, "</body></html>")
+}
+
+func headerHandler(w http.ResponseWriter, r *http.Request) {
 	request_path := r.URL.Path[1:]
 	if len(request_path) > 0 {
-		fmt.Fprintln(w, "requested url path:")
+		fmt.Fprintln(w, "Requested URL Path:")
 		fmt.Fprintf(w, " '%s'\n", request_path)
 	}
 	printHeader(w, r.Header)
+}
+
+func viewHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Path[len("/view/"):]
+	p, _ := loadPage(title)
+	fmt.Fprintf(w, "<html><body><h1>%s</h1>\n<div>%s</div></body></html>", p.Title, p.Body)
 }
