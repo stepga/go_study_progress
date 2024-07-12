@@ -79,7 +79,9 @@ func listFilesWithSuffix(suffix string) []string {
 	ret := make([]string, 0)
 	for _, dir_entry := range dir_entries {
 		if strings.HasSuffix(dir_entry.Name(), suffix) {
-			ret = append(ret, dir_entry.Name())
+			fname := dir_entry.Name()
+			fname = fname[:len(fname)-len(suffix)]
+			ret = append(ret, fname)
 		}
 	}
 	sort.Strings(ret)
@@ -99,17 +101,12 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	suffix := ".txt"
-	txt_file_names := listFilesWithSuffix(suffix)
-	fmt.Fprintln(w, "<html><body>")
-	if len(txt_file_names) > 0 {
-		fmt.Fprintf(w, "<h1>Pages:</h1>\n")
-	}
+	txt_file_names := listFilesWithSuffix(".txt")
+	fmt.Fprintf(w, "<h1>Pages</h1>")
 	for _, fname := range txt_file_names {
-		page_title := fname[:len(fname)-len(suffix)]
-		fmt.Fprintf(w, "<a href=\"/view/%s\">%s</a><br>\n", page_title, page_title)
+		page := &Page{Title: fname}
+		renderTemplate(w, "index", page)
 	}
-	fmt.Fprintln(w, "</body></html>")
 }
 
 func headerHandler(w http.ResponseWriter, r *http.Request) {
@@ -144,6 +141,10 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/save/"):]
 	body := r.FormValue("body")
 	p := &Page{Title: title, Body: []byte(body)}
-	p.save()
+	err := p.save()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	http.Redirect(w, r, "/view/"+title, http.StatusFound)
 }
