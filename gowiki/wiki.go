@@ -37,18 +37,6 @@ func loadPage(title string) (*Page, error) {
 }
 
 func main() {
-	p1 := &Page{Title: "First Test Page", Body: []byte("This is a sample Page.")}
-	err := p1.save()
-	if err != nil {
-		log.Printf("[ERROR] Saving Page '%s' failed: %v\n", p1.filename(), err)
-	}
-	p2, err := loadPage("First Test Page")
-	if err != nil {
-		log.Printf("[ERROR] Loading Page '%s' failed: %v\n", p2.filename(), err)
-	} else {
-		fmt.Printf("%s\n", p2.Body)
-	}
-
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/header", headerHandler)
 	http.HandleFunc("/view/", viewHandler)
