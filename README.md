@@ -2,11 +2,11 @@
 
 ## A Tour of Go (2024/07/11)
 
-See [tour](tour/) directory. Repo's version: [281f138](https://go.googlesource.com/tour/+/281f13835cebd654dfc48c97cb14b54c21242b05).
+See [tour directory](tour/).
 
 ## Documentation/Tutorials/Blog Posts
 
-- [ ] The Go Blog
+- [o] The Go Blog
   - [X] [Go's Declaration Syntax](https://go.dev/blog/declaration-syntax)
   - [X] [Go Slices: usage and internals](https://go.dev/blog/slices-intro)
   - [X] [How to Write Go Code](how_to_write_go_code/)
@@ -17,3 +17,9 @@ See [tour](tour/) directory. Repo's version: [281f138](https://go.googlesource.c
   - [ ] [Interfaces and other types](https://go.dev/doc/effective_go#interfaces_and_types)
 - [X] Codewalk
   - [X] See [Codewalk: Share Memory By Communicating](share_memory_by_communicating/) directory.
+
+It's also always good to look at the annotated code pieces at [Go By Example](https://gobyexample.com/).
+
+## Learn Go With Tests
+
+See [tests directory](tests/).
