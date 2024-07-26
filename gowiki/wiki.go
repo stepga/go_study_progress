@@ -90,10 +90,9 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	txt_file_names := listFilesWithSuffix(".txt")
-	fmt.Fprintf(w, "<h1>Pages</h1>")
+	renderTemplate(w, "index_header", nil)
 	for _, fname := range txt_file_names {
-		page := &Page{Title: fname}
-		renderTemplate(w, "index", page)
+		renderTemplate(w, "index", &Page{Title: fname})
 	}
 }
 

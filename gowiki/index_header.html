@@ -1,0 +1,27 @@
+<h1>Pages</h1>
+
+<form>
+	<input id="newpage-text" type="text">
+	<input id="newpage-button" type="button" value="Create New Page!">
+</form>
+
+<script type="text/javascript">
+const newpageButton = document.querySelector('#newpage-button');
+const newpageText = document.querySelector('#newpage-text');
+
+newpageText.addEventListener("keydown", function(event) {
+	if (event.keyCode === 13) { // 13 == 0x0d == CR (ASCII) == Enter
+		event.preventDefault();
+		newpageButton.click();
+	}
+});
+
+newpageButton.addEventListener('click', click_action);
+
+function click_action() {
+	if (!newpageText.value || newpageText.value.length === 0) {
+		return;
+	}
+	window.open("edit/" + newpageText.value, "_self");
+}
+</script>
