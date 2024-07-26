@@ -10,6 +10,9 @@ import (
 	"strings"
 )
 
+var templates = template.Must(template.ParseFiles("edit.html", "view.html", "index.html", "index_header.html"))
+var port = 8080
+
 type Page struct {
 	Title string
 	Body  []byte
@@ -42,7 +45,9 @@ func main() {
 	http.HandleFunc("/view/", viewHandler)
 	http.HandleFunc("/edit/", editHandler)
 	http.HandleFunc("/save/", saveHandler)
-	log.Fatalf("[ERROR] ListenAndServe: %v\n", http.ListenAndServe(":8080", nil))
+	var port_str = fmt.Sprintf(":%d", port)
+	log.Printf("[INFO] listening on port: %s\n", port_str)
+	log.Fatalf("[ERROR] ListenAndServe: %v\n", http.ListenAndServe(port_str, nil))
 }
 
 func printHeader(w http.ResponseWriter, h http.Header) {
@@ -77,12 +82,7 @@ func listFilesWithSuffix(suffix string) []string {
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
-	t, err := template.ParseFiles(tmpl + ".html")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	err = t.Execute(w, p)
+	err := templates.ExecuteTemplate(w, tmpl+".html", p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
