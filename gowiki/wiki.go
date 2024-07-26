@@ -108,6 +108,10 @@ func headerHandler(w http.ResponseWriter, r *http.Request) {
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/view/"):]
+	if len(title) == 0 {
+		http.Error(w, "A Page's minimum title length is 1", http.StatusBadRequest)
+		return
+	}
 	p, err := loadPage(title)
 	if err != nil {
 		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
@@ -118,6 +122,10 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/edit/"):]
+	if len(title) == 0 {
+		http.Error(w, "A Page's minimum title length is 1", http.StatusBadRequest)
+		return
+	}
 	p, err := loadPage(title)
 	if err != nil {
 		p = &Page{Title: title}
@@ -127,6 +135,13 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/save/"):]
+	// TODO: instead of displaying plain error messages:
+	//       - redirect to /index with an embedded error message
+	//       - rework `renderTemplate`
+	if len(title) == 0 {
+		http.Error(w, "A Page's minimum title length is 1", http.StatusBadRequest)
+		return
+	}
 	body := r.FormValue("body")
 	p := &Page{Title: title, Body: []byte(body)}
 	err := p.save()
