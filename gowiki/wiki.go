@@ -1,11 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"sort"
 	"strings"
 )
@@ -17,6 +19,18 @@ type Page struct {
 	Title string
 	Body  []byte
 	// XXX: ^ `io` libraries expect rather `[]byte` types instead of `string`
+}
+
+// TODO: redirect to index with embedded error message
+// instead of showing a 404 error page
+func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
+	pathValidator := regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
+	matches := pathValidator.FindStringSubmatch(r.URL.Path)
+	if matches == nil {
+		http.NotFound(w, r)
+		return "", errors.New("invalid Page Title")
+	}
+	return matches[2], nil
 }
 
 func (p *Page) filename() string {
@@ -83,9 +97,8 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Path[len("/view/"):]
-	if len(title) == 0 {
-		http.Error(w, "A Page's minimum title length is 1", http.StatusBadRequest)
+	title, err := getTitle(w, r)
+	if err != nil {
 		return
 	}
 	p, err := loadPage(title)
@@ -97,9 +110,8 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Path[len("/edit/"):]
-	if len(title) == 0 {
-		http.Error(w, "A Page's minimum title length is 1", http.StatusBadRequest)
+	title, err := getTitle(w, r)
+	if err != nil {
 		return
 	}
 	p, err := loadPage(title)
@@ -110,17 +122,13 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Path[len("/save/"):]
-	// TODO: instead of displaying plain error messages:
-	//       - redirect to /index with an embedded error message
-	//       - rework `renderTemplate`
-	if len(title) == 0 {
-		http.Error(w, "A Page's minimum title length is 1", http.StatusBadRequest)
+	title, err := getTitle(w, r)
+	if err != nil {
 		return
 	}
 	body := r.FormValue("body")
 	p := &Page{Title: title, Body: []byte(body)}
-	err := p.save()
+	err = p.save()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
