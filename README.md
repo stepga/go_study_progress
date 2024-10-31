@@ -1,5 +1,23 @@
 # Go Study Progress
 
+## Update Go
+
+Download Go from [^1] (see also [^2]), and then:
+```
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.23.2.linux-amd64.tar.gz
+```
+
+For updating the binaries installed via `go`, use `gup` [^3]:
+```
+go install github.com/nao1215/gup@latest
+$GOPATH/bin/gup update --dry-run
+$GOPATH/bin/gup help
+```
+
+[^1]: https://go.dev/dl/
+[^2]: https://go.dev/doc/install
+[^3]: https://github.com/nao1215/gup
+
 ## A Tour of Go (2024/07/11)
 
 See [tour directory](tour/).
